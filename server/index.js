@@ -5,8 +5,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import morgan from 'morgan';
+import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { error } from 'console';
 
 
 /* configuration */
@@ -16,11 +18,10 @@ const __dirName = path.dirname(__filename);
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(helmet());
-app.use(helmet.crossOriginResourucePolicy({policy:'cross-origin'}));
+app.use(helmet({crossOriginEmbedderPolicy:false}));
 app.use(morgan("common"));
 app.use(bodyParser.json({limit:"30mb", extended:true}));
-app.use(bodyParser.use({limit :"30mb", extended:true}));
+app.use(bodyParser.urlencoded({limit :"30mb", extended:true}));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirName,'public/assets')));
 
@@ -35,3 +36,15 @@ const storage = multer.diskStorage({
 })
 
 const upload =multer({storage});
+
+/* mongoose setup*/
+
+const PORT = process.env.PORT||6000;
+console.log(process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI)
+    .then(()=>{
+        app.listen(PORT, ()=>{
+            console.log(`Server port :${PORT}`)
+        })
+    
+}).catch((err)=>console.log(err));
