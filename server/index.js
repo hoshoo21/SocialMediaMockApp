@@ -8,9 +8,8 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { error } from 'console';
 import { register } from './controllers/auth.js';
-
+import authRoutes from './routes/auth.js';
 
 /* configuration */
 const __filename = fileURLToPath(import.meta.url); 
@@ -41,6 +40,9 @@ const upload =multer({storage});
 /* Auth Mechanism*/
 /* ROutes with file */
 app.post('/auth/register', upload.single('picture'),register );
+
+/* Routes */
+app.use('/auth',authRoutes);
 
 /* mongoose setup*/
 
