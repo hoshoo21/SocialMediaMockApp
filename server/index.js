@@ -14,6 +14,9 @@ import userRoutes from './routes/user.js';
 import postRoutes from "./routes/posts.js";
 import { createPost } from './controllers/posts.js';
 import {verifyToken} from './middlewares/auth.js';
+import User from './models/user.js';
+import Posts from './models/posts.js';
+import {users, posts} from './data/index.js';
 /* configuration */
 const __filename = fileURLToPath(import.meta.url); 
 const __dirName = path.dirname(__filename);
@@ -43,12 +46,12 @@ const upload =multer({storage});
 /* Auth Mechanism*/
 /* ROutes with file */
 app.post('/auth/register', upload.single('picture') ,register );
-app.use("/posts",verifyToken, upload.single("picture"), createPost);
+app.post("/posts/",verifyToken, upload.single("picture"), createPost);
 
 /* Routes */
 app.use('/auth',authRoutes);
 app.use('/users', userRoutes);
-app.use("/posts", postRoutes);
+app.use("/posts/", postRoutes);
 /* mongoose setup*/
 
 const PORT = process.env.PORT||6000;
@@ -57,6 +60,12 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(()=>{
         app.listen(PORT, ()=>{
             console.log(`Server port :${PORT}`)
+
         })
-    
+        const posts  = Posts.find();
+        const users  = User.find();
+        console.log(posts);
+        console.log(users);
+        //User.insertMany(users);
+        //Posts.insertMany(posts); 
 }).catch((err)=>console.log(err));
